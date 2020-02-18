@@ -10,9 +10,7 @@ ENV CLIENT_NAME "1.5.1.0"
 
 
 
-RUN apt-get update
-
-RUN apt-get install -y --no-install-recommends \
+RUN apk install -y --no-install-recommends \
             wget \
             nano \
             htop \
@@ -22,8 +20,6 @@ RUN apt-get install -y --no-install-recommends \
             libressl-dev
 
 
-
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN ["chmod", "+x", "/entrypoint.sh"]
