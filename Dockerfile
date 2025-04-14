@@ -5,11 +5,9 @@ LABEL maintainer="janhajk <janhajk@gmail.com>"
 ENV CLIENT_URL="https://github.com/RadiumCore/radium-0.11/archive/1.5.1.0.tar.gz" \
     CLIENT_NAME="1.5.1.0"
 
-# Installiere Abhängigkeiten, vermeide openssl-dev
+# Installiere nur die notwendigen Abhängigkeiten
 RUN apk add --no-cache \
     wget \
-    nano \
-    htop \
     build-base \
     boost-dev \
     boost-system \
@@ -20,8 +18,6 @@ RUN apk add --no-cache \
     libressl-dev \
     db-dev \
     miniupnpc-dev \
-    qt5-qtbase-dev \
-    qt5-qttools-dev \
     su-exec \
     && rm -rf /var/cache/apk/*
 
