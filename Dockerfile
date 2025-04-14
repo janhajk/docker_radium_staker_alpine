@@ -3,8 +3,8 @@ FROM debian:buster-slim
 LABEL maintainer="Jan Schär <janhajk@gmail.com>"
 
 ENV VALIDITY_VERSION=13.1.6.0
-ENV VALIDITY_URL=[invalid url, do not cite]
-ENV VALIDITY_SHA256=dein_sha256_hier  # Ersetze mit tatsächlichem SHA256
+ENV VALIDITY_URL=https://codeload.github.com/RadiumCore/Validity/tar.gz/refs/tags/13.1.6.0
+ENV VALIDITY_SHA256=E4B5C1374999B31FFDD9AE6041B24C68EFAB64225CA10F1554247DC79B8FD5FC  # Ersetze mit tatsächlichem SHA256
 
 RUN set -ex \
     && apt-get update \
