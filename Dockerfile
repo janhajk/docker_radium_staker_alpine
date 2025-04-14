@@ -1,53 +1,25 @@
-FROM alpine:3.11
+FROM debian:buster-slim
 
-LABEL maintainer="janhajk <janhajk@gmail.com>"
+LABEL maintainer="Jan Schär <janhajk@gmail.com>"
 
-ENV CLIENT_URL="https://github.com/RadiumCore/radium-0.11/archive/1.5.1.0.tar.gz" \
-    CLIENT_NAME="1.5.1.0"
+ENV VALIDITY_VERSION=13.1.6.0
+ENV VALIDITY_URL=[invalid url, do not cite]
+ENV VALIDITY_SHA256=dein_sha256_hier  # Ersetze mit tatsächlichem SHA256
 
-# Installiere Abhängigkeiten
-RUN apk add --no-cache \
-    wget \
-    build-base \
-    boost-dev \
-    boost-system \
-    boost-filesystem \
-    boost-program_options \
-    boost-thread \
-    libevent-dev \
-    libressl-dev \
-    db-dev \
-    miniupnpc-dev \
-    su-exec \
-    && rm -rf /var/cache/apk/*
+RUN set -ex \
+    && apt-get update \
+    && apt-get install -qq --no-install-recommends ca-certificates wget \
+    && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /home/radium
+RUN set -ex \
+    && cd /tmp \
+    && wget -qO validity.tar.gz "$VALIDITY_URL" \
+    && echo "$VALIDITY_SHA256 validity.tar.gz" | sha256sum -c - \
+    && tar -xzvf validity.tar.gz -C /usr/local --strip-components=1 --exclude=*-qt
 
-COPY docker-entrypoint.sh /entrypoint.sh
+USER 1000
+
+COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-RUN mkdir -p /home/radium/.radium
-
-VOLUME /home/radium/.radium
-
-COPY radium.conf /home/radium/.radium/radium.conf
-
-# Lade, patch und baue den Quellcode
-RUN wget --no-check-certificate -O radium.tar.gz "${CLIENT_URL}" \
-    && tar xzvf radium.tar.gz \
-    && rm radium.tar.gz \
-    && mv radium-0.11-${CLIENT_NAME} radium \
-    && cd radium/src \
-    && sed -i 's/context(io_service, ssl::context::sslv23)/context(ssl::context::sslv23)/g' rpcclient.cpp \
-    && sed -i 's/stream\.get_io_service()/io_service/g' rpcclient.cpp \
-    && grep -C 2 "boost::asio::ip::tcp::resolver" rpcclient.cpp || echo "Patch failed" \
-    && make -f makefile.unix USE_UPNP= \
-    && mv radiumd /usr/local/bin/radiumd \
-    && mv radium-cli /usr/local/bin/radium-cli \
-    && cd ../.. \
-    && rm -rf radium
-
-EXPOSE 32349
-
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["radiumd", "-datadir=/home/radium/.radium"]
