@@ -1,11 +1,11 @@
-FROM alpine:3.18
+FROM alpine:3.11
 
 LABEL maintainer="janhajk <janhajk@gmail.com>"
 
 ENV CLIENT_URL="https://github.com/RadiumCore/radium-0.11/archive/1.5.1.0.tar.gz" \
     CLIENT_NAME="1.5.1.0"
 
-# Installiere nur die notwendigen Abhängigkeiten
+# Installiere Abhängigkeiten
 RUN apk add --no-cache \
     wget \
     build-base \
