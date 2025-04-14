@@ -1,31 +1,23 @@
-#!/bin/bash -e
+#!/bin/sh
+set -e
 
+# Setze Standard-UID und GID, falls nicht durch Umgebungsvariablen definiert
+PUID=${PUID:-1026}
+PGID=${PGID:-100}
+
+# Erstelle Gruppe und Benutzer dynamisch basierend auf PUID/PGID
+if ! getent group radium >/dev/null; then
+    addgroup -g "${PGID}" radium
+fi
+
+if ! id radium >/dev/null 2>&1; then
+    adduser -u "${PUID}" -G radium -h /home/radium -D -s /bin/sh radium
+fi
+
+# Passe Berechtigungen von /home/radium/.radium an
+chown -R radium:radium /home/radium/.radium
+chmod -R u+rwX /home/radium/.radium
+
+# Starte radiumd als Benutzer radium
 echo "Starting Radium Daemon..."
-radiumcli=/home/radium/radium/radium-0.11-1.5.1.0/src/radiumd
-# cp /home/radium/radium.conf /home/radium/.radium/radium.conf
-/home/radium/radium/radium-0.11-1.5.1.0/src/radiumd -datadir=/home/radium/.radium & 
-
-while true; do sleep 1000; done
-
-
-# echo "Waiting for daemon..."
-# sleep 60
-
-
-# n=0
-# until [ $n -ge 60 ]
-# do
-#   echo "Attempting to unlock wallet for staking..."
-#    $radiumcli walletpassphrase $PASSPHRASE 9999999 true && break
-#   n=$[$n+1]
-
-#   echo "Unable to unlock wallet, retrying in a few seconds..."
-#   sleep 5
-# done
-
-# if [ "$?" -eq 0 ]; then
-#   echo "Wallet unlocked successfully."
-# else
-#   echo "Unable to unlock wallet after 5 minutes."
-#   exit 1
-# fi
+exec su-exec radium radiumd -datadir=/home/radium/.radium
