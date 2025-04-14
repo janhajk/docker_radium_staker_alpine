@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
     container_name: radium
     volumes:
-      - /volume1/docker/radium-data:/home/radium/.radium
+      - /volume1/docker/radium:/home/radium/.radium
     ports:
       - "32349:32349"
     restart: unless-stopped
