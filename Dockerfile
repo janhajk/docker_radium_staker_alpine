@@ -1,10 +1,10 @@
-FROM debian:buster-slim
+FROM debian:stretch-slim
 
 LABEL maintainer="janhajk <janhajk@gmail.com>"
 
 ENV VALIDITY_VERSION=13.1.6.0
-ENV VALIDITY_URL=https://github.com/RadiumCore/Validity/archive/refs/tags/13.1.6.0.tar.gz
-#ENV VALIDITY_SHA256=deine_sha256_pruefsumme_hier
+ENV VALIDITY_URL=https://github.com/RadiumCore/Validity/archive/refs/tags/${VALIDITY_VERSION}.tar.gz
+ENV VALIDITY_SHA256=E4B5C1374999B31FFDD9AE6041B24C68EFAB64225CA10F1554247DC79B8FD5FC
 
 # Installiere Build-Abhängigkeiten
 RUN apt-get update \
@@ -34,7 +34,7 @@ RUN useradd -m -u 1000 validity \
 # Lade und entpacke den Quellcode
 RUN cd /tmp \
     && wget -qO validity.tar.gz "$VALIDITY_URL" \
-    #&& echo "$VALIDITY_SHA256 validity.tar.gz" | sha256sum -c - \
+    && echo "$VALIDITY_SHA256 validity.tar.gz" | sha256sum -c - \
     && tar -xzvf validity.tar.gz \
     && mv Validity-${VALIDITY_VERSION} /validity \
     && rm validity.tar.gz
