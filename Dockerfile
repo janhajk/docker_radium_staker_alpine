@@ -4,8 +4,9 @@ LABEL maintainer="janhajk <janhajk@gmail.com>"
 
 ENV VALIDITY_VERSION=13.1.6.0
 ENV VALIDITY_URL=https://github.com/RadiumCore/Validity/archive/refs/tags/${VALIDITY_VERSION}.tar.gz
-ENV VALIDITY_SHA256=E4B5C1374999B31FFDD9AE6041B24C68EFAB64225CA10F1554247DC79B8FD5FC
-# Aktualisiere die Paketquellen auf das Archiv-Repository
+ENV VALIDITY_SHA256=deine_sha256_pruefsumme_hier
+
+# Installiere Build-Abhängigkeiten
 RUN echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list \
     && echo "deb http://archive.debian.org/debian-security stretch/updates main" >> /etc/apt/sources.list \
     && apt-get update \
@@ -23,9 +24,19 @@ RUN echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.
        libboost-filesystem-dev \
        libboost-program-options-dev \
        libboost-thread-dev \
-       libdb5.3-dev \
        libminiupnpc-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Installiere Berkeley DB 4.8
+RUN cd /tmp \
+    && wget -qO db-4.8.30.NC.tar.gz http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz \
+    && echo "12edc0df75bf9abd7f82f821795bcee50f42cb2e5f76a6a281b85732798364 db-4.8.30.NC.tar.gz" | sha256sum -c - \
+    && tar -xzvf db-4.8.30.NC.tar.gz \
+    && cd db-4.8.30.NC/build_unix \
+    && ../dist/configure --prefix=/usr/local --enable-cxx \
+    && make \
+    && make install \
+    && rm -rf /tmp/db-4.8.30.NC*
 
 # Erstelle Benutzer und Verzeichnis
 RUN useradd -m -u 1000 validity \
@@ -43,7 +54,7 @@ RUN cd /tmp \
 # Kompiliere Validity
 RUN cd /validity \
     && ./autogen.sh \
-    && ./configure --without-gui --disable-tests --disable-bench --with-incompatible-bdb \
+    && ./configure --without-gui --disable-tests --disable-bench \
     && make \
     && make install \
     && mv /usr/local/bin/validityd /usr/local/bin/validity-cli /usr/local/bin/ \
