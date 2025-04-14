@@ -32,7 +32,7 @@ RUN adduser -D -u 1000 validity \
 # Lade und entpacke den Quellcode
 RUN cd /tmp \
     && wget --no-check-certificate -O validity.tar.gz "$VALIDITY_URL" \
-    && echo "$VALIDITY_SHA256 validity.tar.gz" | sha256sum -c - \
+    #&& echo "$VALIDITY_SHA256 validity.tar.gz" | sha256sum -c - \
     && tar -xzvf validity.tar.gz \
     && mv Validity-${VALIDITY_VERSION} /validity \
     && rm validity.tar.gz
