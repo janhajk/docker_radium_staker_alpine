@@ -3,7 +3,7 @@ FROM debian:buster-slim
 LABEL maintainer="janhajk <janhajk@gmail.com>"
 
 ENV VALIDITY_VERSION=13.1.6.0
-ENV VALIDITY_URL=https://github.com/RadiumCore/Validity/archive/refs/tags/v${VALIDITY_VERSION}.tar.gz
+ENV VALIDITY_URL=https://github.com/RadiumCore/Validity/archive/refs/tags/13.1.6.0.tar.gz
 #ENV VALIDITY_SHA256=deine_sha256_pruefsumme_hier
 
 # Installiere Build-Abhängigkeiten
