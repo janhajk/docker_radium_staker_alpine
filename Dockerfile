@@ -32,11 +32,14 @@ VOLUME /home/radium/.radium
 
 COPY radium.conf /home/radium/.radium/radium.conf
 
+# Lade und patch den Quellcode
 RUN wget --no-check-certificate -O radium.tar.gz "${CLIENT_URL}" \
     && tar xzvf radium.tar.gz \
     && rm radium.tar.gz \
     && mv radium-0.11-${CLIENT_NAME} radium \
     && cd radium/src \
+    && sed -i 's/context(io_service, ssl::context::sslv23)/context(ssl::context::sslv23)/' rpcclient.cpp \
+    && sed -i 's/stream.get_io_service()/io_service/' rpcclient.cpp \
     && make -f makefile.unix USE_UPNP= \
     && mv radiumd /usr/local/bin/radiumd \
     && mv radium-cli /usr/local/bin/radium-cli \
