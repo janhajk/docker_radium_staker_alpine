@@ -4,7 +4,7 @@ LABEL maintainer="janhajk <janhajk@gmail.com>"
 
 ENV VALIDITY_VERSION=13.1.6.0
 ENV VALIDITY_URL=https://github.com/RadiumCore/Validity/archive/refs/tags/${VALIDITY_VERSION}.tar.gz
-ENV VALIDITY_SHA256=deine_sha256_pruefsumme_hier
+ENV VALIDITY_SHA256=E4B5C1374999B31FFDD9AE6041B24C68EFAB64225CA10F1554247DC79B8FD5FC
 
 # Installiere Build-Abhängigkeiten
 RUN echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list \
