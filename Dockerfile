@@ -1,14 +1,11 @@
-# Verwende ein modernes Basis-Image
 FROM alpine:3.18
 
-# Maintainer
 LABEL maintainer="janhajk <janhajk@gmail.com>"
 
-# Umgebungsvariablen
 ENV CLIENT_URL="https://github.com/RadiumCore/radium-0.11/archive/1.5.1.0.tar.gz" \
     CLIENT_NAME="1.5.1.0"
 
-# Installiere Abhängigkeiten
+# Installiere Abhängigkeiten, vermeide openssl-dev
 RUN apk add --no-cache \
     wget \
     nano \
@@ -25,25 +22,20 @@ RUN apk add --no-cache \
     miniupnpc-dev \
     qt5-qtbase-dev \
     qt5-qttools-dev \
+    su-exec \
     && rm -rf /var/cache/apk/*
 
-# Arbeitsverzeichnis
 WORKDIR /home/radium
 
-# Kopiere Einstiegsskript
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Erstelle Verzeichnis für Blockchain-Daten
 RUN mkdir -p /home/radium/.radium
 
-# Volume für persistente Daten
 VOLUME /home/radium/.radium
 
-# Kopiere radium.conf
 COPY radium.conf /home/radium/.radium/radium.conf
 
-# Lade und baue Radium
 RUN wget --no-check-certificate -O radium.tar.gz "${CLIENT_URL}" \
     && tar xzvf radium.tar.gz \
     && rm radium.tar.gz \
@@ -55,9 +47,7 @@ RUN wget --no-check-certificate -O radium.tar.gz "${CLIENT_URL}" \
     && cd ../.. \
     && rm -rf radium
 
-# Exponiere Standard-Ports (falls benötigt)
 EXPOSE 32349
 
-# Setze Einstiegspunkt
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["radiumd", "-datadir=/home/radium/.radium"]
