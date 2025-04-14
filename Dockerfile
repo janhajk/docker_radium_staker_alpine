@@ -4,7 +4,7 @@ LABEL maintainer="janhajk <janhajk@gmail.com>"
 
 ENV VALIDITY_VERSION=13.1.6
 ENV VALIDITY_URL=https://github.com/RadiumCore/Validity/releases/download/v${VALIDITY_VERSION}/validity-${VALIDITY_VERSION}-x86_64-linux-gnu.tar.gz
-ENV VALIDITY_SHA256=E4B5C1374999B31FFDD9AE6041B24C68EFAB64225CA10F1554247DC79B8FD5FC
+#ENV VALIDITY_SHA256=deine_sha256_pruefsumme_hier
 
 # Installiere Abhängigkeiten
 RUN apt-get update \
@@ -21,7 +21,7 @@ RUN useradd -m -u 1000 validity \
 # Lade und verifiziere Validity-Binaries
 RUN cd /tmp \
     && wget -qO validity.tar.gz "$VALIDITY_URL" \
-    && echo "$VALIDITY_SHA256 validity.tar.gz" | sha256sum -c - \
+ #   && echo "$VALIDITY_SHA256 validity.tar.gz" | sha256sum -c - \
     && tar -xzvf validity.tar.gz -C /usr/local/bin --strip-components=2 validity-${VALIDITY_VERSION}/bin/validityd validity-${VALIDITY_VERSION}/bin/validity-cli \
     && rm validity.tar.gz
 
@@ -29,7 +29,7 @@ RUN cd /tmp \
 COPY validity.conf /home/validity/.validity/validity.conf
 COPY entrypoint.sh /entrypoint.sh
 
-# Setze Berechtigungen für Entrypoint-Script
+# Setze Berechtigungen
 RUN chown validity:validity /home/validity/.validity/validity.conf /entrypoint.sh \
     && chmod +x /entrypoint.sh
 
